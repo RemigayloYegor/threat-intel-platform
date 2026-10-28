@@ -6,14 +6,18 @@
 обогащение, расчёт риска, корреляция в кластеры угроз, сопоставление с событиями и REST API.
 Ядро написано на чистой стандартной библиотеке Python — без внешних зависимостей.
 
-```
- фиды (txt/csv/      нормализация      обогащение        скоринг        корреляция
- stix/misp)      ──▶ и дедупликация ──▶ (geoip/          риска     ──▶  в кластеры
-      │               IOC               reputation/       0-100            угроз
-      │                                 whois)              │                │
-      ▼                                                     ▼                ▼
- матчинг событий ◀──────────── SQLite (indicators, enrichments, scores, alerts) ──▶ REST API
- (логи → алерты)                              │                                      отчёты (MD)
+```mermaid
+flowchart LR
+    F["Фиды<br/>txt · csv · stix · misp<br/>abuse.ch Feodo"] --> N["Нормализация<br/>и дедупликация IOC"]
+    N --> DB[("SQLite<br/>indicators · scores<br/>enrichments · alerts")]
+    DB --> E["Обогащение<br/>geoip · reputation · whois"]
+    E --> SC["Скоринг риска<br/>0–100 + severity"]
+    SC --> C["Корреляция<br/>в кластеры угроз"]
+    LOGS["Журналы событий"] --> M["Матчинг по базе IOC"]
+    DB --> M
+    M --> AL["Алерты"]
+    DB --> API["REST API"]
+    DB --> R["Отчёты (Markdown)"]
 ```
 
 ## Возможности
